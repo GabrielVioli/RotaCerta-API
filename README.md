@@ -1,58 +1,107 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# RotaCerta API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API REST em Laravel para gestão de pedidos, clientes e itens em estoque. O frontend será desenvolvido em Flutter, em um repositório separado.
 
-## About Laravel
+**Autor:** Gabriel Vinicius de Oliveira  
+**Status:** em desenvolvimento. As rotas abaixo representam o contrato planejado e ainda precisam ser implementadas e testadas.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Funcionalidades
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Login e logout de usuários.
+- CRUD de clientes, categorias, itens e pedidos.
+- Consulta de pedidos pendentes, entregues, cancelados e atrasados.
+- Consulta de quantidades em estoque, com atualização manual.
+- Visualização de etiqueta de entrega pelo aplicativo Flutter.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Dados principais
 
-## Learning Laravel
+| Recurso | Campos previstos |
+| --- | --- |
+| Clientes | Nome e telefone |
+| Categorias | Nome e descrição |
+| Itens | Nome, categoria e quantidade em estoque |
+| Pedidos | Cliente, item, quantidade, endereço de entrega, prazo máximo e status |
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Rotas planejadas
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Todas as rotas usam o prefixo `/api` e respostas JSON. `{id}` representa o identificador do registro.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### Autenticação
 
-## Agentic Development
+| Método | Rota | Descrição | Acesso |
+| --- | --- | --- | --- |
+| POST | `/api/login` | Autenticar com e-mail e senha e obter um token | Público |
+| GET | `/api/me` | Consultar o usuário autenticado | Autenticado |
+| POST | `/api/logout` | Encerrar a sessão, revogando o token atual | Autenticado |
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+Nesta versão, os usuários de demonstração serão criados por seeders; não haverá cadastro público de usuários. As demais rotas exigirão `Authorization: Bearer <token>` e acesso restrito aos registros do usuário autenticado.
 
-```bash
-composer require laravel/boost --dev
+### Clientes
 
-php artisan boost:install
-```
+| Método | Rota | Descrição |
+| --- | --- | --- |
+| GET | `/api/clientes` | Listar clientes |
+| POST | `/api/clientes` | Cadastrar cliente |
+| GET | `/api/clientes/{id}` | Consultar cliente |
+| PUT | `/api/clientes/{id}` | Editar cliente |
+| DELETE | `/api/clientes/{id}` | Excluir cliente |
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### Categorias
 
-## Contributing
+| Método | Rota | Descrição |
+| --- | --- | --- |
+| GET | `/api/categorias` | Listar categorias |
+| POST | `/api/categorias` | Cadastrar categoria |
+| GET | `/api/categorias/{id}` | Consultar categoria |
+| PUT | `/api/categorias/{id}` | Editar categoria |
+| DELETE | `/api/categorias/{id}` | Excluir categoria |
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Itens
 
-## Code of Conduct
+| Método | Rota | Descrição |
+| --- | --- | --- |
+| GET | `/api/itens` | Listar itens e quantidades em estoque |
+| POST | `/api/itens` | Cadastrar item |
+| GET | `/api/itens/{id}` | Consultar item |
+| PUT | `/api/itens/{id}` | Editar item, incluindo a quantidade em estoque |
+| DELETE | `/api/itens/{id}` | Excluir item |
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Pedidos
 
-## Security Vulnerabilities
+| Método | Rota | Descrição |
+| --- | --- | --- |
+| GET | `/api/pedidos` | Listar pedidos |
+| POST | `/api/pedidos` | Cadastrar pedido |
+| GET | `/api/pedidos/{id}` | Consultar detalhes do pedido, incluindo cliente e item |
+| PUT | `/api/pedidos/{id}` | Editar pedido |
+| PATCH | `/api/pedidos/{id}/status` | Alterar status para pendente, entregue ou cancelado |
+| DELETE | `/api/pedidos/{id}` | Excluir pedido |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+O resumo da tela inicial será calculado no Flutter a partir dos pedidos retornados. A etiqueta também será montada no Flutter usando os dados de `GET /api/pedidos/{id}`. Não haverá rota adicional, geração de PDF ou integração com impressora nesta versão.
 
-## License
+## Regras de negócio
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- Cada pedido contém um único tipo de item e uma quantidade inteira maior que zero.
+- Novos pedidos começam com status `pendente`.
+- Os status permitidos são `pendente`, `entregue` e `cancelado`.
+- Um pedido é considerado atrasado quando está pendente e sua data limite já passou. Atrasado é uma indicação calculada, não um status salvo.
+- A quantidade em estoque é inteira, não negativa e atualizada manualmente.
+- Criar, editar, excluir ou cancelar pedidos não altera nem reserva estoque. O estoque disponível não bloqueia o cadastro de pedidos.
+- Clientes e itens vinculados a pedidos não podem ser excluídos. Categorias vinculadas a itens também não podem ser excluídas.
+- Os vínculos entre pedidos, clientes, itens e categorias devem pertencer ao mesmo usuário autenticado.
+
+## Organização prevista
+
+- **Controllers:** recebem requisições e retornam respostas JSON.
+- **Requests:** validam os dados recebidos.
+- **Services:** aplicam as regras de negócio.
+- **Repositories:** concentram as consultas e gravações no banco.
+- **Models:** representam as entidades e seus relacionamentos.
+- **Migrations:** definem a estrutura do banco de dados.
+- **Factories e Seeders:** preparam dados de demonstração.
+
+## Execução e demonstração
+
+As instruções de instalação, configuração do banco e execução serão adicionadas após a configuração do backend. A demonstração das rotas será disponibilizada em um arquivo `rest.http`.
+
+O arquivo `.env`, senhas reais e tokens de acesso não devem ser enviados ao repositório. O `.env.example` deverá conter apenas configurações de exemplo sem segredos.
