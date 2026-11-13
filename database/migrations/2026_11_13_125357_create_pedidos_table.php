@@ -16,9 +16,9 @@ return new class extends Migration
             $table->integer("quantidade");
             $table->text("endereco_entrega");
             $table->date("prazo_entrega");
-            $table->boolean("status");
+            $table->string("status")->default("pendente");
             $table->foreignId("user_id")->constrained("users");
-            $table->foreignid("cliente_id")->constrained("clientes");
+            $table->foreignId("cliente_id")->constrained("clientes");
             $table->foreignId("item_id")->constrained("items");
             $table->timestamps();
         });
